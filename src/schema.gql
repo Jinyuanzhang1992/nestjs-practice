@@ -9,15 +9,27 @@ type User {
   gender: String
 }
 
+type UserMongo {
+  id: String!
+  name: String!
+  age: Int
+  gender: String
+}
+
 type Query {
   findAll: [User!]!
   findOne(id: Float!): User!
+  findAllMongoUsers: [UserMongo!]!
+  findOneMongoUser(id: String!): UserMongo!
 }
 
 type Mutation {
   create(createUserDto: CreateUserDto!): User!
-  update(updateUserDto: UpdateUserDto!): User!
+  update(id: Float!, updateUserDto: UpdateUserDto!): User!
   delete(id: Float!): User!
+  createMongoUser(createMongoUserDto: CreateMongoUserDto!): UserMongo!
+  updateMongoUser(id: String!, updateMongoUserDto: UpdateMongoUserDto!): UserMongo!
+  deleteMongoUser(id: String!): UserMongo!
 }
 
 input CreateUserDto {
@@ -30,5 +42,16 @@ input UpdateUserDto {
   name: String
   age: Float
   gender: String
-  id: Int!
+}
+
+input CreateMongoUserDto {
+  name: String!
+  age: Float!
+  gender: String
+}
+
+input UpdateMongoUserDto {
+  name: String
+  age: Float
+  gender: String
 }

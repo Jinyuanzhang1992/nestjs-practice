@@ -9,17 +9,35 @@ import { APP_FILTER, APP_INTERCEPTOR, APP_PIPE, APP_GUARD } from '@nestjs/core';
 import { ValidatePipe } from './common/pipes/validate.pipe';
 import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { DatabaseService } from './database.service';
+import { MongooseModule } from '@nestjs/mongoose';
 
 @Module({
   imports: [
+    MongooseModule.forRoot(
+      'mongodb://jinyuan:zzc19921014@localhost/nest?authSource=admin&useNewUrlParser=true&useUnifiedTopology=true',
+    ),
+    TypeOrmModule.forRoot({
+      type: 'postgres',
+      host: 'localhost',
+      port: 5433,
+      username: 'jinyuan',
+      password: 'zzc19921014',
+      database: 'bqdatabase',
+      entities: [__dirname + '/**/*.entity{.ts,.js}'],
+      // synchronize: true, // 在生产环境中不要使用
+      synchronize: false, // 在生产环境中使用
+    }),
     UserModule,
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
-      // csrfPrevention: false, // 关闭 CSRF 预防
+      context: ({ req, res }) => ({ req, res }),
     }),
   ],
   providers: [
+    DatabaseService,
     {
       provide: APP_PIPE,
       useClass: ValidatePipe,
