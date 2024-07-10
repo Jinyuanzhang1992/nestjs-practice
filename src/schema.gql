@@ -11,6 +11,7 @@ type User {
   email: String
   phone: String
   password: String
+  roles: [String!]!
 }
 
 type UserMongo {
@@ -20,6 +21,7 @@ type UserMongo {
   password: String!
   age: Int
   gender: String
+  roles: [String!]!
 }
 
 type LoginResponseDto {

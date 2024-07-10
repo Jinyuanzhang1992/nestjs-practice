@@ -4,7 +4,6 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { join } from 'path';
 import { LoggerMiddleware } from './common/middleware/logger.middleware';
-import { AuthGuard } from './common/auth/auth.guards';
 import { APP_FILTER, APP_INTERCEPTOR, APP_PIPE, APP_GUARD } from '@nestjs/core';
 import { ValidatePipe } from './common/pipes/validate.pipe';
 import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
@@ -56,10 +55,6 @@ import { ConfigModule } from '@nestjs/config';
       provide: APP_FILTER,
       useClass: HttpExceptionFilter,
     },
-    // {
-    //   provide: APP_GUARD,
-    //   useClass: AuthGuard,
-    // },
   ],
 })
 export class AppModule implements NestModule {

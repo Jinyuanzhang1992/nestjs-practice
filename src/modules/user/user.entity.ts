@@ -26,6 +26,9 @@ export class User {
 
   @Column({ nullable: true })
   password?: string;
+
+  @Column('simple-array')
+  roles: string[];
 }
 
 //注意，id 指的是实体类中的主键字段，而不是数据库表中的主键字段。在这里，我们使用 @PrimaryGeneratedColumn() 装饰器来指定 id 为主键字段，并且是自动生成的。

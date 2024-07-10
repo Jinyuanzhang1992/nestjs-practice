@@ -13,6 +13,7 @@ export class AuthService {
   //验证用户
   async validateUser(username: string, pass: string): Promise<any> {
     const user = await this.userService.findOneByUserName(username);
+    console.log('user in service: ', user);
     if (user && user.password === pass) {
       const { password, ...result } = user;
       return result;
@@ -25,7 +26,11 @@ export class AuthService {
 
   //登陆
   async login(user: any) {
-    const payload: JwtPayload = { username: user.username, sub: user.userId };
+    const payload: JwtPayload = {
+      username: user.username,
+      sub: user.userId,
+      roles: user.roles,
+    };
     return this.jwtService.sign(payload);
   }
   //登陆成功后，生成一个token，返回给前端

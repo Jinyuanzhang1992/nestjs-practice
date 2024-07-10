@@ -1,23 +1,31 @@
 import { Resolver, Query, Args, Mutation } from '@nestjs/graphql';
 import { UserService } from './user.service';
 import { User, UserMongo } from './types';
-import { ParseIntPipe } from '@nestjs/common';
+import { ParseIntPipe, UseGuards } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { CreateMongoUserDto } from './dto/create-mongo-user.dto';
 import { UpdateMongoUserDto } from './dto/update-mongo-user.dto';
+import { RolesGuard } from '../../auth/roles.guard';
+import { Roles } from '../../auth/roles.decorator';
+import { Role } from '../../auth/roles.enum';
+import { JwtAuthGuard } from '../../auth/jwt-auth.guard';
 
 @Resolver()
 export class UserResolver {
   constructor(private readonly userService: UserService) {}
 
   //postgreSQL操作
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.Admin)
   @Query(() => [User])
   async findAll(): Promise<User[]> {
     return await this.userService.findAll();
   }
   //@Query(() => [User])用于定义一个查询操作，返回值是一个User类型的数组
 
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.Admin, Role.Student)
   @Query(() => User)
   async findOne(
     @Args('id', ParseIntPipe) id: number,

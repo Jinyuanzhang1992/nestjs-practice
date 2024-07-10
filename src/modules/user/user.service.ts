@@ -30,7 +30,7 @@ export class UserService {
 
   async findOne(id: number): Promise<User | undefined> {
     const user = await this.userRepository.findOne({ where: { id } });
-    console.log('user:', user);
+    // console.log('user:', user);
     if (!user) {
       throw new NotFoundException(`User with ID ${id} not found`);
     }
@@ -43,7 +43,7 @@ export class UserService {
 
   async findOneByUserName(username: string): Promise<User | undefined> {
     const user = await this.userRepository.findOne({ where: { username } });
-    console.log('user:', user);
+    // console.log('user:', user);
     if (!user) {
       throw new NotFoundException(`User with Username: ${username} not found`);
     }
@@ -60,7 +60,7 @@ export class UserService {
   //create 方法用于创建一个新的实体实例，但并不会将这个实例保存到数据库中。
   //save 方法用于将一个实体实例保存到数据库中。如果该实体已经存在于数据库中，它会进行更新；如果该实体是新的，它会进行插入。
 
-  async update(id: number, updateUserDto: UpdateMongoUserDto): Promise<User> {
+  async update(id: number, updateUserDto: UpdateUserDto): Promise<User> {
     const existingUser = await this.findOne(id);
     if (!existingUser) {
       throw new NotFoundException('User not found');

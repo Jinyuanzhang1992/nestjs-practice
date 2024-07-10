@@ -7,6 +7,7 @@ import {
   Body,
   Put,
   Delete,
+  UseGuards,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { User, UserMongo } from './types';
@@ -14,6 +15,10 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { CreateMongoUserDto } from './dto/create-mongo-user.dto';
 import { UpdateMongoUserDto } from './dto/update-mongo-user.dto';
+import { RolesGuard } from '../../auth/roles.guard';
+import { Roles } from '../../auth/roles.decorator';
+import { Role } from '../../auth/roles.enum';
+import { JwtAuthGuard } from '../../auth/jwt-auth.guard';
 
 @Controller('users')
 //只能用单引号，不能用双引号
@@ -53,6 +58,8 @@ export class UserController {
   }
 
   //postgreSQL 操作
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.Admin, Role.Student)
   @Get()
   async findAll(): Promise<User[]> {
     return await this.userService.findAll();

@@ -1,15 +1,100 @@
-import { Injectable, ExecutionContext } from '@nestjs/common';
+import {
+  Injectable,
+  ExecutionContext,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
+import { GqlExecutionContext } from '@nestjs/graphql';
+
+type ContextType = 'http' | 'graphql';
 
 @Injectable()
 export class LocalAuthGuard extends AuthGuard('local') {
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    await super.canActivate(context);
-    //通过调用 super.canActivate(context)，LocalAuthGuard 使用基类 AuthGuard 的 canActivate 方法来处理初始的身份验证逻辑。
-    return true;
-    //返回 true 表示守卫成功通过，允许请求继续执行。
+    if (context.getType() === 'http') {
+      return (await super.canActivate(context)) as boolean;
+    } else if (context.getType() === ('graphql' as ContextType)) {
+      const ctx = GqlExecutionContext.create(context);
+      const request = ctx.getContext().req;
+      request.body = ctx.getArgs().input;
+      return (await super.canActivate(context)) as boolean;
+    }
+  }
+
+  getRequest(context: ExecutionContext) {
+    if (context.getType() === 'http') {
+      return context.switchToHttp().getRequest();
+    } else if (context.getType() === ('graphql' as ContextType)) {
+      const ctx = GqlExecutionContext.create(context);
+      const request = ctx.getContext().req;
+      request.body = ctx.getArgs().input;
+      return request;
+    }
+  }
+
+  handleRequest(err, user, info) {
+    console.log('handleRequest called');
+    console.log('user: ', user);
+    console.log('err: ', err);
+    console.log('info: ', info);
+    if (err || !user) {
+      throw err || new UnauthorizedException(info?.message);
+    }
+    return user;
   }
 }
+
+// import {
+//   Injectable,
+//   ExecutionContext,
+//   UnauthorizedException,
+// } from '@nestjs/common';
+// import { AuthGuard } from '@nestjs/passport';
+// import { GqlExecutionContext } from '@nestjs/graphql';
+
+// @Injectable()
+// export class LocalAuthGuard extends AuthGuard('local') {
+//   async canActivate(context: ExecutionContext): Promise<boolean> {
+//     const ctx = GqlExecutionContext.create(context);
+//     const request = ctx.getContext().req;
+//     request.body = ctx.getArgs().input; // 将 GraphQL 参数映射到请求体中
+//     return (await super.canActivate(context)) as boolean;
+//   }
+
+//   getRequest(context: ExecutionContext) {
+//     const ctx = GqlExecutionContext.create(context);
+//     const request = ctx.getContext().req;
+//     request.body = ctx.getArgs().input; // 将 GraphQL 参数映射到请求体中
+//     return request;
+//   }
+
+//   handleRequest(err, user, info) {
+//     console.log('handleRequest called');
+//     console.log('user: ', user);
+//     console.log('err: ', err);
+//     console.log('info: ', info);
+//     if (err || !user) {
+//       throw err || new UnauthorizedException(info?.message);
+//     }
+//     return user;
+//   }
+// }
+
+// import { Injectable, ExecutionContext } from '@nestjs/common';
+// import { AuthGuard } from '@nestjs/passport';
+
+// @Injectable()
+// export class LocalAuthGuard extends AuthGuard('local') {
+//   async canActivate(context: ExecutionContext): Promise<boolean> {
+//     await super.canActivate(context);
+//     const request = context.switchToHttp().getRequest();
+//     console.log('request in local-auth.guard: ', request);
+//     //通过调用 super.canActivate(context)，LocalAuthGuard 使用基类 AuthGuard 的 canActivate 方法来处理初始的身份验证逻辑。
+//     return true;
+//     //返回 true 表示守卫成功通过，允许请求继续执行。
+//   }
+// }
+
 // LocalAuthGuard 类继承自 AuthGuard 类，用于本地验证，'local' 作为策略名称传递给 AuthGuard 类，这样，LocalAuthGuard 将使用 local 策略来处理身份验证。
 //canActivate 方法是一个异步方法，用于决定是否允许当前请求继续执行。
 //context 是 ExecutionContext 类型的参数，它提供了对当前请求的上下文的访问。ExecutionContext 是 NestJS 中的一个接口，允许你访问有关当前请求的信息，包括：

@@ -8,6 +8,8 @@ import { ConfigService, ConfigModule } from '@nestjs/config';
 import { AuthController } from './auth.controller';
 import { LocalStrategy } from './local.strategy';
 import { AuthResolver } from './auth.resolver';
+import { JwtAuthGuard } from './jwt-auth.guard';
+import { LocalAuthGuard } from './local-auth.guard';
 
 @Global()
 @Module({
@@ -32,7 +34,14 @@ import { AuthResolver } from './auth.resolver';
     }),
     //使用JwtModule.registerAsync()方法注册 JWT 模块以便于在JwtService中使用
   ],
-  providers: [AuthService, JwtStrategy, LocalStrategy, AuthResolver],
+  providers: [
+    AuthService,
+    JwtStrategy,
+    LocalStrategy,
+    AuthResolver,
+    JwtAuthGuard,
+    LocalAuthGuard,
+  ],
   exports: [AuthService, JwtModule, PassportModule],
   controllers: [AuthController],
 })

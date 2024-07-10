@@ -25,6 +25,9 @@ export class User {
 
   @Field({ nullable: true })
   password?: string;
+
+  @Field(() => [String])
+  roles: string[];
 }
 
 @ObjectType()
@@ -46,4 +49,7 @@ export class UserMongo {
 
   @Field({ nullable: true })
   gender?: string;
+
+  @Field(() => [String])
+  roles: string[];
 }
