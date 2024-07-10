@@ -1,24 +1,31 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, Unique } from 'typeorm';
 
 @Entity()
+@Unique(['username'])
 export class User {
   @PrimaryGeneratedColumn({ name: 'u_id' })
   id: number;
 
   @Column()
+  username: string;
+
+  @Column()
   name: string;
 
-  @Column()
-  age: number;
+  @Column({ nullable: true })
+  age?: number;
 
-  @Column()
-  gender: string;
+  @Column({ nullable: true })
+  gender?: string;
 
   @Column({ nullable: true })
   email?: string;
 
   @Column({ nullable: true })
   phone?: string;
+
+  @Column({ nullable: true })
+  password?: string;
 }
 
 //注意，id 指的是实体类中的主键字段，而不是数据库表中的主键字段。在这里，我们使用 @PrimaryGeneratedColumn() 装饰器来指定 id 为主键字段，并且是自动生成的。

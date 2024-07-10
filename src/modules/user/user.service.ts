@@ -41,6 +41,15 @@ export class UserService {
   //User类型是接口，是一个对象，包含id和name属性
   //where { id }表示查询条件是id等于传入的id参数
 
+  async findOneByUserName(username: string): Promise<User | undefined> {
+    const user = await this.userRepository.findOne({ where: { username } });
+    console.log('user:', user);
+    if (!user) {
+      throw new NotFoundException(`User with Username: ${username} not found`);
+    }
+    return user;
+  }
+
   async create(createUserDto: CreateUserDto): Promise<User> {
     const newUser = this.userRepository.create(createUserDto);
     //创建一个新用户

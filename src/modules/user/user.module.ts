@@ -25,5 +25,6 @@ import { MongooseModule } from '@nestjs/mongoose';
       inject: [DataSource],
     },
   ],
+  exports: [UserService],
 })
 export class UserModule {}

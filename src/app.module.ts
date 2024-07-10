@@ -12,9 +12,14 @@ import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { DatabaseService } from './database.service';
 import { MongooseModule } from '@nestjs/mongoose';
+import { AuthModule } from './auth/auth.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      isGlobal: true, // 设置为全局模块
+    }),
     MongooseModule.forRoot(
       'mongodb://jinyuan:zzc19921014@localhost/nest?authSource=admin&useNewUrlParser=true&useUnifiedTopology=true',
     ),
@@ -35,6 +40,7 @@ import { MongooseModule } from '@nestjs/mongoose';
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
       context: ({ req, res }) => ({ req, res }),
     }),
+    AuthModule,
   ],
   providers: [
     DatabaseService,

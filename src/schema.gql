@@ -5,15 +5,26 @@
 type User {
   id: Int!
   name: String!
+  username: String!
   age: Int
   gender: String
+  email: String
+  phone: String
+  password: String
 }
 
 type UserMongo {
   id: String!
   name: String!
+  username: String!
+  password: String!
   age: Int
   gender: String
+}
+
+type LoginResponseDto {
+  token: String!
+  user: User!
 }
 
 type Query {
@@ -30,6 +41,7 @@ type Mutation {
   createMongoUser(createMongoUserDto: CreateMongoUserDto!): UserMongo!
   updateMongoUser(id: String!, updateMongoUserDto: UpdateMongoUserDto!): UserMongo!
   deleteMongoUser(id: String!): UserMongo!
+  login(input: LoginRequestDto!): LoginResponseDto!
 }
 
 input CreateUserDto {
@@ -54,4 +66,9 @@ input UpdateMongoUserDto {
   name: String
   age: Float
   gender: String
+}
+
+input LoginRequestDto {
+  username: String!
+  password: String!
 }
